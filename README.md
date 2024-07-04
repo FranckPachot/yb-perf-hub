@@ -7,9 +7,11 @@ docker compose up
 
 2. Go to http://localhost:3000
 
-3. Set your data source to any node on your YugabyteDB cluser
+3. Set your data source to any node on your YugabyteDB cluster
 
-4. Go to home and select you data source
+4. Go to home and select your data source
+
+⚠️ it creates some Foreign Data Wrapper and views to see all nodes
 
 and watch something like this:
 
