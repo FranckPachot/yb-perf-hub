@@ -1,5 +1,7 @@
 # yb-perf-hub
 
+🧪 experimental dashboard on YugabyteDB Active Session history
+
 1. Start this with
 ```
 docker compose up
