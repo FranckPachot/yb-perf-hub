@@ -1,3 +1,7 @@
+/*
+the same is run automatically from the dashboard
+*/
+
 drop function if exists yb_ash_fdw;
 create function yb_ash_fdw(
  username text default 'yugabyte', password text default 'yugabyte'
@@ -82,3 +86,8 @@ create function yb_ash_fdw(
   return query select distinct format('%s.%s.%s %s',gv$cloud,gv$region,gv$zone,gv$host) as "__text" , gv$host as "__value" from gv$yb_active_session_history;
  end;
 $PL$ language plpgsql;
+
+
+select "__text", "__value" from yb_ash_fdw('yugabyte','yugabyte') 
+;
+
