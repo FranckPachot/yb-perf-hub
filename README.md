@@ -2,16 +2,18 @@
 
 🧪 experimental dashboard on YugabyteDB Active Session history
 
-1. Start this with
+1. set the IP of one node of your YugabyteDB cluster in `.env`
+
+2. Start this with
 ```
 docker compose up
 ```
 
-2. Go to http://localhost:3000
+3. Go to http://localhost:3000
 
-3. Set your data source to any node on your YugabyteDB cluster
+4. Set your data source to any node on your YugabyteDB cluster
 
-4. Go to home and select your data source
+5. Go to home and select your data source
 
 ⚠️ it creates some Foreign Data Wrapper and views to see all nodes
 

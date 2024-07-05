@@ -3,6 +3,8 @@ services:
     image: grafana/grafana-oss:latest
     ports:
       - '3000:3000'
+    extra_hosts:
+      - yb:${ip_of_yugabytedb_database}
     user: "0:0"
     volumes:
       - .:/etc/grafanax:ro
