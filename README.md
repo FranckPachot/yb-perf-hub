@@ -9,7 +9,7 @@
 docker compose up
 ```
 
-3. Go to http://localhost:3000
+3. Go to http://localhost:3000 (user admin password admin)
 
 If you have set the IP in `.env` the default data source goes to it and you can go to the Active Session History dashboard
 
