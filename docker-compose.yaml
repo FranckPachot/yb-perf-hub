@@ -16,6 +16,13 @@ services:
       - .:/var/lib/grafana
     restart: unless-stopped
 
+  dumpdb:
+    # saves grafana.db to sql file when starting
+    image: nouchka/sqlite3
+    entrypoint: bash -xc 'sqlite3 /db/grafana.db .dump > /db/dump.grafana.db.sql'
+    volumes:
+      - .:/db
+
 
 # example if you want to run a test cluster
 
@@ -33,8 +40,6 @@ services:
       --tserver_flags="allowed_preview_flags_csv={ysql_yb_ash_enable_infra,ysql_yb_enable_ash},ysql_yb_ash_enable_infra=true,ysql_yb_enable_ash=true" \
       --background=false \
     '
-   #command: bash -c "yugabyted start --join=${COMPOSE_PROJECT_NAME}-yugabytedb-1 --background=false ||  yugabyted start --background=false"
-   #command: ping ${COMPOSE_PROJECT_NAME}-yugabytedb-1
    healthcheck:
     interval: 15s
     timeout: 3s
