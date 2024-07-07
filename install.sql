@@ -1,5 +1,6 @@
 /*
-the same is run automatically from the dashboard
+the same is run automatically from the dashboard in the variable `server`
+(and this file might be stale as I update the dashboard)
 */
 
 drop function if exists yb_ash_fdw;
@@ -33,7 +34,6 @@ create function yb_ash_fdw(
     select format('
      create user mapping if not exists for current_user
      server "gv$%1$s"
-     options ( user %2$L, password %3$L )
      ',host, username, password ) as sql
      from yb_servers()
   ) loop
@@ -58,7 +58,7 @@ create function yb_ash_fdw(
   for ddl in (
     select format('
      import foreign schema "pg_catalog"
-     limit to ("yb_active_session_history","pg_stat_statements")
+     limit to ("yb_active_session_history","pg_stat_statements","yb_local_tablets")
      from server "gv$%1$s" into "gv$%1$s"
      ', host) as sql from yb_servers()
   ) loop
@@ -83,11 +83,26 @@ create function yb_ash_fdw(
   ) loop
    execute ddl.sql;
   end loop;
-  return query select distinct format('%s.%s.%s %s',gv$cloud,gv$region,gv$zone,gv$host) as "__text" , gv$host as "__value" from gv$yb_active_session_history;
+  return query 
+select distinct format('%s.%s.%s %s',gv$cloud,gv$region,gv$zone,gv$host) as "__text" , gv$host as "__value"
+from gv$yb_active_session_history  where '$agg'='Host'
+union all
+select distinct format('%s.%s.%s',gv$cloud,gv$region,gv$zone,gv$host) as "__text" , gv$zone as "__value"
+from gv$yb_active_session_history where '$agg'='Zone'
+union all
+select distinct format('%s.%s',gv$cloud,gv$region,gv$zone,gv$host) as "__text" , gv$region as "__value"
+from gv$yb_active_session_history where '$agg'='Region'
+union all
+select distinct format('%s',gv$cloud,gv$region,gv$zone,gv$host) as "__text" , gv$cloud as "__value"
+from gv$yb_active_session_history where '$agg'='Cloud'
+;
  end;
 $PL$ language plpgsql;
 
 
-select "__text", "__value" from yb_ash_fdw('yugabyte','yugabyte') 
+
+select "__text", "__value" from yb_ash_fdw('$username','$password') 
+--union all 
+--select '%','%'
 ;
 
