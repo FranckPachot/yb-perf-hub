@@ -37,10 +37,11 @@ docker compose down
 
 # start RF3 YugabyteFB
 docker compose up -d  yugabytedb --scale yugabytedb=1 --no-recreate
-until docker compose exec yugabytedb postgres/bin/pg_isready -h yb-perf-hub-yugabytedb-1 ; do sleep 1 ; done | uniq
+until docker compose exec yugabytedb postgres/bin/pg_isready -h yb-perf-hub-yugabytedb-1 ; do sleep 1 ; done | paste -s | uniq
 docker compose up -d  yugabytedb --scale yugabytedb=2 --no-recreate
-until docker compose exec yugabytedb postgres/bin/pg_isready -h yb-perf-hub-yugabytedb-2 ; do sleep 1 ; done | uniq
+until docker compose exec yugabytedb postgres/bin/pg_isready -h yb-perf-hub-yugabytedb-2 ; do sleep 1 ; done | paste -s | uniq
 docker compose up -d  yugabytedb --scale yugabytedb=3 --no-recreate
+until docker compose exec yugabytedb postgres/bin/pg_isready -h yb-perf-hub-yugabytedb-3 ; do sleep 1 ; done | paste -s | uniq
 
 # define IP to one node and start Grafana dashboard
 sed -e '$a'"ip_of_yugabytedb_database=$(docker compose exec yugabytedb hostname -i)"  .env > .lab.env
