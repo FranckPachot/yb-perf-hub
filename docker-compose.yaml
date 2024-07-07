@@ -4,6 +4,7 @@ services:
     ports:
       - '3000:3000'
     extra_hosts:
+      # the default connection is set to yb:5433 so rederecting it to `ip_of_yugabytedb_database` defined in `.env` which default to `127.0.0.1`
       - yb:${ip_of_yugabytedb_database}
     user: "0:0"
     volumes:
