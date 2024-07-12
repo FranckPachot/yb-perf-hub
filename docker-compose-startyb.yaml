@@ -3,14 +3,6 @@ name: ${COMPOSE_PROJECT_NAME}
 
 services:
 
-  dumpdb:
-    # saves grafana.db to sql file when starting
-    image: nouchka/sqlite3
-    entrypoint: bash -xc 'sqlite3 /db/grafana.db .dump > /db/dump.grafana.db.sql ; sqlite3 /db/grafana.db "select data from dashboard_version order by id desc limit 1;" > /db/dump.last.dashboard.json'
-    volumes:
-      - .:/db
-
-
 # example if you want to run a test cluster
 
   yugabytedb:

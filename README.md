@@ -18,6 +18,7 @@ docker compose up
 ---
 
 ⚠️ When loading the ASH dashboard, it creates some Foreign Data Wrapper and views to see all nodes
+You may have to change the variable definition to put the password
 
 ---
 
