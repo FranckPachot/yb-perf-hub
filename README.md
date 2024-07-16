@@ -1,6 +1,7 @@
 # yb-perf-hub
 
 🧪 experimental dashboard on YugabyteDB Active Session history
+⚠️  this creates a user (gv$fdw) with a random password (to use with FDW) and remote tables and views to query ASH on all nodes
 
 1. set the IP of one node of your YugabyteDB cluster in `.env` (the IP, not the hostname, because this goes to /etc/hosts in the container)
 
@@ -17,8 +18,8 @@ docker compose up
 
 ---
 
-⚠️ When loading the ASH dashboard, it creates some Foreign Data Wrapper and views to see all nodes
-You may have to change the variable definition to put the password
+When loading the ASH dashboard, it creates some Foreign Data Wrapper and views to see all nodes
+The code is in the 'server' variable definition of the Active Session History dashboard
 
 ---
 
@@ -30,19 +31,18 @@ Example:
 
 You can experiment in a local lab starting a YugabyteDB cluster with docker compose:
 ```
-docker compose down
-
 # start RF3 YugabyteFB
-docker compose up -d  yugabytedb --scale yugabytedb=1 --no-recreate
-until docker compose exec yugabytedb postgres/bin/pg_isready -h yb-perf-hub-yugabytedb-1 ; do sleep 1 ; done | paste -s | uniq
-docker compose up -d  yugabytedb --scale yugabytedb=2 --no-recreate
-until docker compose exec yugabytedb postgres/bin/pg_isready -h yb-perf-hub-yugabytedb-2 ; do sleep 1 ; done | paste -s | uniq
-docker compose up -d  yugabytedb --scale yugabytedb=3 --no-recreate
-until docker compose exec yugabytedb postgres/bin/pg_isready -h yb-perf-hub-yugabytedb-3 ; do sleep 1 ; done | paste -s | uniq
+docker compose -f docker-compose-startyb.yaml down
+docker compose -f docker-compose-startyb.yaml up -d  yugabytedb --scale yugabytedb=1 --no-recreate
+until docker compose -f docker-compose-startyb.yaml exec yugabytedb postgres/bin/pg_isready -h yb-perf-hub-yugabytedb-1 ; do sleep 1 ; done | paste -s | uniq
+docker compose -f docker-compose-startyb.yaml up -d  yugabytedb --scale yugabytedb=2 --no-recreate
+until docker compose -f docker-compose-startyb.yaml exec yugabytedb postgres/bin/pg_isready -h yb-perf-hub-yugabytedb-2 ; do sleep 1 ; done | paste -s | uniq
+docker compose -f docker-compose-startyb.yaml up -d  yugabytedb --scale yugabytedb=3 --no-recreate
+until docker compose -f docker-compose
 
 # define IP to one node and start Grafana dashboard
-sed -e '$a'"ip_of_yugabytedb_database=$(docker compose exec yugabytedb hostname -i)"  .env > .lab.env
-docker compose --env-file=.lab.env up -d --scale yugabytedb=3 --no-recreate
+sed -e '$a'"ip_of_yugabytedb_database=$(docker compose -f docker-compose-startyb.yaml exec yugabytedb hostname -i)"  .env > .lab.env
+docker compose --env-file=.lab.env up -d 
 
 # run your stuff in psql
 docker compose exec -it yugabytedb ysqlsh -h yb-perf-hub-yugabytedb-1
